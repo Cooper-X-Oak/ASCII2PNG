@@ -27,6 +27,7 @@ jobs:
         
     - name: Build macOS Application
       run: |
+        # Ensure script is executable
         chmod +x build_dmg.sh
         ./build_dmg.sh
         
