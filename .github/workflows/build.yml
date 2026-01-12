@@ -31,10 +31,11 @@ jobs:
         ./build_dmg.sh
         
     - name: Upload DMG Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ASCII2PNG-macOS-DMG
         path: dist/ASCII2PNG.dmg
+        compression-level: 0 # DMG is already compressed
 
   build-windows:
     runs-on: windows-latest
