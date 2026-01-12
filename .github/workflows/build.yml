@@ -3,9 +3,14 @@ name: Build and Release
 on:
   push:
     branches: [ main, master ]
+    tags:
+      - 'v*'
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build-macos:
@@ -27,7 +32,6 @@ jobs:
         
     - name: Build macOS Application
       run: |
-        # Ensure script is executable
         chmod +x build_dmg.sh
         ./build_dmg.sh
         
@@ -36,7 +40,7 @@ jobs:
       with:
         name: ASCII2PNG-macOS-DMG
         path: dist/ASCII2PNG.dmg
-        compression-level: 0 # DMG is already compressed
+        compression-level: 0
 
   build-windows:
     runs-on: windows-latest
@@ -63,4 +67,34 @@ jobs:
       with:
         name: ASCII2PNG-Windows-EXE
         path: dist/ASCII2PNG.exe
-        compression-level: 0 # EXE is already compressed
+        compression-level: 0
+
+  release:
+    needs: [build-macos, build-windows]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+    - name: Download macOS Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ASCII2PNG-macOS-DMG
+        
+    - name: Download Windows Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ASCII2PNG-Windows-EXE
+        
+    - name: Display structure of downloaded files
+      run: ls -R
+      
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          ASCII2PNG.dmg
+          ASCII2PNG.exe
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
