@@ -5,154 +5,233 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASCII 架构图生成器</title>
     <link rel="stylesheet" href="/static/style.css">
+    <!-- Icon font if needed, using SVG for now -->
 </head>
 <body>
-    <div class="container">
-        <!-- Controls -->
-        <div class="controls">
-            <h1>ASCII 架构图生成器</h1>
+    <div class="app-container">
+        <!-- Sidebar: Configuration -->
+        <aside class="sidebar">
+            <header class="sidebar-header">
+                <h1>ASCII 架构图生成器</h1>
+                <p class="subtitle">让文本架构图焕然一新</p>
+            </header>
             
-            <div class="input-group">
-                <label for="ascii-input">输入 ASCII 树状图</label>
-                <textarea id="ascii-input" placeholder="Project
-├── src
-│   ├── main.py
-│   └── utils.py
-└── README.md">Project
+            <div class="sidebar-content">
+                <div class="input-section">
+                    <label for="ascii-input">输入 ASCII 文本</label>
+                    <textarea id="ascii-input" placeholder="粘贴你的 tree 命令输出或 ASCII 图表..." spellcheck="false">Project
 ├── src
 │   ├── main.py
 │   └── utils.py
 └── README.md</textarea>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                <div>
-                    <label for="layout-mode" style="display:block; margin-bottom: 0.5rem; font-weight: 500;">排版模式</label>
-                    <select id="layout-mode" class="form-select">
-                        <option value="horizontal" selected>现代横排 (Modern)</option>
-                        <option value="vertical">古籍竖排 (RTL Vertical)</option>
-                    </select>
                 </div>
-                <div>
-                    <label for="line-style" style="display:block; margin-bottom: 0.5rem; font-weight: 500;">线条样式 & 颜色</label>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <select id="line-style" class="form-select" style="flex: 1;">
-                            <option value="solid" selected>实线 (Solid)</option>
+
+                <div class="options-section">
+                    <!-- Layout Mode is REMOVED -->
+
+                    <div class="option-group">
+                        <label>线条样式</label>
+                        <select id="line-style" class="form-select">
+                            <option value="solid">实线 (Solid)</option>
                             <option value="dotted">点线 (Dotted)</option>
                             <option value="dashed">虚线 (Dashed)</option>
                             <option value="wave">波浪线 (Wave)</option>
                             <option value="cloud">云纹 (Cloud)</option>
                         </select>
-                        <input type="color" id="line-color" value="#333333" style="height: 45px; width: 60px; padding: 2px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; background: white;" title="点击选择颜色">
                     </div>
-                    <div style="margin-top: 5px; font-size: 0.8rem; color: #666; display: flex; align-items: center;">
-                         <input type="checkbox" id="enable-color" style="margin-right: 5px;"> 启用自定义颜色
+
+                    <div class="option-group">
+                        <label>主题风格</label>
+                        <div class="style-grid" id="style-selector">
+                            <div class="style-item active" data-style="minimal" style="background: #fff; border: 1px solid #ddd; color: #333;">简约</div>
+                            <div class="style-item" data-style="business" style="background: #f5f7fa; color: #2c3e50;">商务</div>
+                            <div class="style-item" data-style="art" style="background: #fff8f0; color: #5d4037;">艺术</div>
+                            <div class="style-item" data-style="dark" style="background: #1e1e1e; color: #fff;">暗黑</div>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                         <label class="checkbox-label">
+                            <input type="checkbox" id="enable-color"> 
+                            <span>自定义线条颜色</span>
+                        </label>
+                        <div class="color-picker-wrapper" id="color-wrapper" style="display: none;">
+                            <input type="color" id="line-color" value="#333333">
+                            <span id="color-value">#333333</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div>
-                <label style="display:block; margin-bottom: 0.5rem;">选择风格</label>
-                <div class="style-selector" id="style-selector">
-                    <div class="style-option style-minimal active" data-style="minimal" data-name="简约">
-                        <div class="style-preview">M</div>
-                    </div>
-                    <div class="style-option style-business" data-style="business" data-name="商务">
-                        <div class="style-preview">B</div>
-                    </div>
-                    <div class="style-option style-art" data-style="art" data-name="艺术">
-                        <div class="style-preview">A</div>
-                    </div>
-                    <div class="style-option style-tech" data-style="tech" data-name="科技">
-                        <div class="style-preview">T</div>
-                    </div>
-                    <div class="style-option style-nature" data-style="nature" data-name="自然">
-                        <div class="style-preview">N</div>
-                    </div>
+            <footer class="sidebar-footer">
+                <button id="btn-generate" class="btn-primary">
+                    <span class="icon">✨</span> 生成图片
+                </button>
+            </footer>
+        </aside>
+
+        <!-- Main: Preview -->
+        <main class="preview-area">
+            <div class="preview-header">
+                <h2>预览</h2>
+                <div class="preview-actions">
+                    <button id="btn-download" class="btn-secondary" disabled>下载图片</button>
+                    <button id="btn-newtab" class="btn-secondary" disabled>新标签页打开</button>
                 </div>
             </div>
-
-            <button class="btn-generate" id="btn-generate">生成图片</button>
-        </div>
-
-        <!-- Preview -->
-        <div class="preview-panel">
-            <div class="loading" id="loading">正在生成...</div>
-            <img src="" alt="Preview" class="preview-image" id="preview-image">
-        </div>
+            
+            <div class="preview-viewport" id="preview-viewport">
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-icon">🖼️</div>
+                    <p>在左侧输入内容并点击生成</p>
+                </div>
+                <div class="loading-state" id="loading-state">
+                    <div class="spinner"></div>
+                    <p>正在渲染...</p>
+                </div>
+                <img id="preview-image" src="" alt="Result" class="result-image">
+            </div>
+        </main>
     </div>
 
     <script>
-        const btnGenerate = document.getElementById('btn-generate');
-        const inputAscii = document.getElementById('ascii-input');
-        const styleSelector = document.getElementById('style-selector');
-        const previewImage = document.getElementById('preview-image');
-        const loading = document.getElementById('loading');
-        const layoutMode = document.getElementById('layout-mode');
-        const lineStyle = document.getElementById('line-style');
-        const lineColor = document.getElementById('line-color');
-        const enableColor = document.getElementById('enable-color');
-        
-        let currentStyle = 'minimal';
+        // DOM Elements
+        const els = {
+            input: document.getElementById('ascii-input'),
+            btnGenerate: document.getElementById('btn-generate'),
+            btnDownload: document.getElementById('btn-download'),
+            btnNewTab: document.getElementById('btn-newtab'),
+            previewViewport: document.getElementById('preview-viewport'),
+            previewImg: document.getElementById('preview-image'),
+            emptyState: document.getElementById('empty-state'),
+            loadingState: document.getElementById('loading-state'),
+            styleSelector: document.getElementById('style-selector'),
+            lineStyle: document.getElementById('line-style'),
+            enableColor: document.getElementById('enable-color'),
+            lineColor: document.getElementById('line-color'),
+            colorWrapper: document.getElementById('color-wrapper'),
+            colorValue: document.getElementById('color-value')
+        };
 
-        // Style Selection
-        styleSelector.addEventListener('click', (e) => {
-            const option = e.target.closest('.style-option');
-            if (!option) return;
+        let state = {
+            theme: 'minimal',
+            lastUrl: null
+        };
 
-            document.querySelectorAll('.style-option').forEach(el => el.classList.remove('active'));
-            option.classList.add('active');
-            currentStyle = option.dataset.style;
+        // Initialize: Auto-generate on load to show preview
+        document.addEventListener('DOMContentLoaded', () => {
+            generateImage();
         });
 
-        // Generate
-        btnGenerate.addEventListener('click', async () => {
-            const text = inputAscii.value;
-            if (!text.trim()) return;
+        // Event Listeners
+        els.styleSelector.addEventListener('click', (e) => {
+            const item = e.target.closest('.style-item');
+            if (!item) return;
+            
+            document.querySelectorAll('.style-item').forEach(el => el.classList.remove('active'));
+            item.classList.add('active');
+            state.theme = item.dataset.style;
+        });
 
-            btnGenerate.disabled = true;
-            btnGenerate.textContent = '生成中...';
-            loading.classList.add('active');
-            previewImage.classList.remove('loaded');
+        els.enableColor.addEventListener('change', (e) => {
+            els.colorWrapper.style.display = e.target.checked ? 'flex' : 'none';
+        });
+
+        els.lineColor.addEventListener('input', (e) => {
+            els.colorValue.textContent = e.target.value;
+        });
+
+        els.btnGenerate.addEventListener('click', generateImage);
+        
+        els.btnDownload.addEventListener('click', () => {
+            if (state.lastUrl) {
+                const a = document.createElement('a');
+                a.href = state.lastUrl;
+                a.download = `ascii2png_${Date.now()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        });
+
+        els.btnNewTab.addEventListener('click', () => {
+            if (state.lastUrl) window.open(state.lastUrl, '_blank');
+        });
+
+        // Core Function
+        async function generateImage() {
+            const text = els.input.value.trim();
+            // Don't alert on load, just return if empty
+            if (!text) {
+                // Only alert if triggered by button click, not auto-load
+                if (event && event.type === 'click') {
+                    alert('请输入一些 ASCII 文本！');
+                }
+                return;
+            }
+
+            setLoading(true);
 
             try {
+                // Force horizontal layout
+                const layoutMode = "horizontal";
+                
                 const response = await fetch('/generate', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         text: text,
-                        theme: currentStyle,
-                        layout_mode: layoutMode.value,
-                        line_style: lineStyle.value,
-                        line_color: enableColor.checked ? lineColor.value : null,
+                        theme: state.theme,
+                        layout_mode: layoutMode,
+                        line_style: els.lineStyle.value,
+                        line_color: els.enableColor.checked ? els.lineColor.value : null,
                         width: 1080
                     })
                 });
 
                 const data = await response.json();
-                
+
                 if (data.error) {
-                    alert('错误: ' + data.error);
-                } else {
-                    previewImage.src = data.image_url + '?t=' + new Date().getTime(); // Prevent cache
-                    previewImage.onload = () => {
-                        previewImage.classList.add('loaded');
-                    };
+                    throw new Error(data.error);
                 }
 
-            } catch (err) {
-                alert('网络错误: ' + err.message);
-            } finally {
-                btnGenerate.disabled = false;
-                btnGenerate.textContent = '生成图片';
-                loading.classList.remove('active');
-            }
-        });
+                showResult(data.image_url);
 
-        // Initial trigger
-        // setTimeout(() => btnGenerate.click(), 500);
+            } catch (err) {
+                alert('生成失败: ' + err.message);
+                setLoading(false);
+            }
+        }
+
+        function setLoading(isLoading) {
+            els.btnGenerate.disabled = isLoading;
+            els.btnGenerate.innerHTML = isLoading ? '<span class="spinner-sm"></span> 生成中...' : '<span class="icon">✨</span> 生成图片';
+            
+            if (isLoading) {
+                els.emptyState.style.display = 'none';
+                els.previewImg.style.display = 'none';
+                els.loadingState.style.display = 'flex';
+                els.btnDownload.disabled = true;
+                els.btnNewTab.disabled = true;
+            }
+        }
+
+        function showResult(url) {
+            state.lastUrl = url;
+            // Prevent cache
+            const fullUrl = url + '?t=' + Date.now();
+            
+            els.previewImg.onload = () => {
+                els.loadingState.style.display = 'none';
+                els.previewImg.style.display = 'block';
+                els.btnGenerate.disabled = false;
+                els.btnGenerate.innerHTML = '<span class="icon">✨</span> 生成图片';
+                els.btnDownload.disabled = false;
+                els.btnNewTab.disabled = false;
+            };
+            
+            els.previewImg.src = fullUrl;
+        }
     </script>
 </body>
 </html>

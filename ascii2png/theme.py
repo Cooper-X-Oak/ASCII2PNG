@@ -16,8 +16,8 @@ def get_theme(name: str, font_size: int) -> Dict[str, Any]:
             **base,
             "bg": (255, 255, 255),
             "text": (33, 33, 33),
-            "line": (200, 200, 200),
-            "accent": (100, 100, 100),
+            "line": (100, 100, 100), # Darker line for better visibility
+            "accent": (50, 50, 50),
             "bg_style": "plain",
         }
     
@@ -25,47 +25,35 @@ def get_theme(name: str, font_size: int) -> Dict[str, Any]:
         # 商务风格：深蓝/灰配色，网格背景
         return {
             **base,
-            "bg": (245, 247, 250),
+            "bg": (240, 242, 245),
             "text": (44, 62, 80),
-            "line": (189, 195, 199),
-            "accent": (52, 152, 219),
+            "line": (160, 174, 192),
+            "accent": (41, 128, 185),
             "bg_style": "grid",
-            "grid_color": (230, 230, 235),
+            "grid_color": (220, 222, 225),
         }
         
     if n == "art" or n == "艺术":
-        # 艺术风格：暖色调，圆形装饰
+        # 艺术风格：暖色调，圆形装饰 (用户喜欢的风格)
         return {
             **base,
             "bg": (253, 250, 245), # Creamy white
             "text": (93, 64, 55),  # Brownish
-            "line": (215, 204, 200),
-            "accent": (255, 112, 67),
+            "line": (180, 160, 150),
+            "accent": (230, 81, 0),
             "bg_style": "circle",
             "circle_colors": [(255, 224, 178), (255, 204, 188)],
         }
         
-    if n == "tech" or n == "科技":
-        # 科技风格：暗色模式，霓虹线条，点阵背景
+    if n == "dark" or n == "暗黑":
+        # 暗黑风格：类似 IDE 的高对比度
         return {
             **base,
-            "bg": (15, 23, 42), # Dark blue/slate
-            "text": (226, 232, 240),
-            "line": (51, 65, 85),
-            "accent": (56, 189, 248), # Cyan
-            "bg_style": "dots",
-            "dot_color": (30, 41, 59),
-        }
-
-    if n == "nature" or n == "自然":
-        # 自然风格：绿色系，渐变感
-        return {
-            **base,
-            "bg": (240, 253, 244), # Light green tint
-            "text": (20, 83, 45),
-            "line": (187, 247, 208),
-            "accent": (22, 163, 74),
-            "bg_style": "gradient_green",
+            "bg": (30, 30, 30),
+            "text": (220, 220, 220),
+            "line": (80, 80, 80),
+            "accent": (86, 156, 214), # VS Code Blue
+            "bg_style": "plain",
         }
 
     # Fallback to Minimal
@@ -73,7 +61,7 @@ def get_theme(name: str, font_size: int) -> Dict[str, Any]:
         **base,
         "bg": (255, 255, 255),
         "text": (33, 33, 33),
-        "line": (200, 200, 200),
-        "accent": (100, 100, 100),
+        "line": (100, 100, 100),
+        "accent": (50, 50, 50),
         "bg_style": "plain",
     }

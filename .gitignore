@@ -1,4 +1,4 @@
-# Python
+# Python Standard
 __pycache__/
 *.py[cod]
 *$py.class
@@ -47,8 +47,17 @@ coverage.xml
 .pytest_cache/
 cover/
 
-# Project specific
-*.spec
+# Logs and databases
 *.log
+*.sqlite
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Output directory (Project standard)
 /output/
-*.manifest
+
+# Documentation (Only keep README)
+*.md
+!README.md

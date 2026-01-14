@@ -5,12 +5,11 @@ from PIL import ImageFont
 # Windows default font paths
 WIN_FONT_PATHS = {
     "serif": [
+        "C:\\Windows\\Fonts\\times.ttf",
         "C:\\Windows\\Fonts\\simsun.ttc",  # Songti
-        "C:\\Windows\\Fonts\\stsong.ttf",
-        "C:\\Windows\\Fonts\\times.ttf"
     ],
     "sans": [
-        "C:\\Windows\\Fonts\\msyh.ttc",    # Microsoft YaHei
+        "C:\\Windows\\Fonts\\msyh.ttc",    # Microsoft YaHei (First priority)
         "C:\\Windows\\Fonts\\msyh.ttf",
         "C:\\Windows\\Fonts\\simhei.ttf",
         "C:\\Windows\\Fonts\\arial.ttf"
@@ -24,10 +23,8 @@ WIN_FONT_PATHS = {
 # MacOS default font paths
 MAC_FONT_PATHS = {
     "serif": [
-        "/System/Library/Fonts/Supplemental/Songti.ttc",
+        "/System/Library/Fonts/Supplemental/Times.ttc",
         "/System/Library/Fonts/Songti.ttc",
-        "/Library/Fonts/Songti.ttc",
-        "/System/Library/Fonts/Times.ttc"
     ],
     "sans": [
         "/System/Library/Fonts/PingFang.ttc",
@@ -55,6 +52,7 @@ def get_font(style: str = "sans", size: int = 20) -> ImageFont.FreeTypeFont:
     for path in candidates:
         if os.path.exists(path):
             try:
+                # Try to load with high resolution for better quality
                 return ImageFont.truetype(path, size)
             except Exception:
                 continue
@@ -66,7 +64,8 @@ def get_font(style: str = "sans", size: int = 20) -> ImageFont.FreeTypeFont:
         return ImageFont.load_default()
 
 def get_title_font(size: int) -> ImageFont.FreeTypeFont:
-    return get_font("serif", size)
+    # Use Sans for title as it usually looks cleaner on screens
+    return get_font("sans", size)
 
 def get_body_font(size: int) -> ImageFont.FreeTypeFont:
     return get_font("sans", size)
